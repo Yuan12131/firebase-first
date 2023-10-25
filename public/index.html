@@ -1,0 +1,209 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Welcome to Firebase Hosting</title>
+
+    <!-- update the version number as needed -->
+    <script defer src="/__/firebase/10.5.0/firebase-app-compat.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script defer src="/__/firebase/10.5.0/firebase-auth-compat.js"></script>
+    <script defer src="/__/firebase/10.5.0/firebase-database-compat.js"></script>
+    <script defer src="/__/firebase/10.5.0/firebase-firestore-compat.js"></script>
+    <script defer src="/__/firebase/10.5.0/firebase-functions-compat.js"></script>
+    <script defer src="/__/firebase/10.5.0/firebase-messaging-compat.js"></script>
+    <script defer src="/__/firebase/10.5.0/firebase-storage-compat.js"></script>
+    <script defer src="/__/firebase/10.5.0/firebase-analytics-compat.js"></script>
+    <script defer src="/__/firebase/10.5.0/firebase-remote-config-compat.js"></script>
+    <script defer src="/__/firebase/10.5.0/firebase-performance-compat.js"></script>
+    <!-- 
+      initialize the SDK after all desired features are loaded, set useEmulator to false
+      to avoid connecting the SDK to running emulators.
+    -->
+    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+
+    <style media="screen">
+      *{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+#root{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.player{
+  width: 1000px;
+  height: 1200px;
+  display: flex;
+  background-image: url("https://d2gfz7wkiigkmv.cloudfront.net/pickin/2/1/2/CHw9H6zgSFWPODG7t3hgFA");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.slideshow-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 480px;
+  height: 360px;
+  overflow: hidden;
+  position: relative;
+  top: 190px;
+  left: 275px;
+  border-radius: 20px;
+}
+
+.slide1{
+  width: 700px;
+  height: 400px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: url("https://m.media-amazon.com/images/M/MV5BODgxZjYyYzUtY2Q3My00YmE3LTg1NjYtNGI2NzM5NmI5ZDM1XkEyXkFqcGdeQXVyNjE0ODc0MDc@._V1_.jpg")
+}
+
+.slide2{
+  width: 700px;
+  height: 400px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: url("https://www.usatoday.com/gcdn/presto/2020/12/02/USAT/fb784dfb-3670-45ce-9b54-c68b1dacfcd6-WONDER_-_ARTWORK_-_FINAL_LOCK.jpg?crop=4499,2531,x0,y1575&width=3200&height=1801&format=pjpg&auto=webp")
+}
+
+.slide3{
+  width: 700px;
+  height: 400px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: url("https://static.independent.co.uk/2023/08/03/13/230511-PLxPM-Album-Cover-Crop.jpg")
+}
+
+
+.player>div:nth-child(3){
+  width: 330px;
+  height: 230px;
+  position: relative;
+  top:730px;
+  right: 130px;
+  display: flex;
+  border-radius: 50px;
+}
+
+.prev{
+  width: 120px;
+  height: 140px;
+  cursor: pointer;
+  position: relative;
+  right: 140px;
+}
+.play{
+  width: 180px;
+  height: 100px;
+  cursor: pointer;
+  position: relative;
+  top: 120px;
+  left: 90px;
+}
+.next{
+  width: 120px;
+  height: 140px;
+  cursor: pointer;
+}
+    </style>
+  </head>
+  <body>
+    <div id="root">
+        <div class="player">
+            <div class="slideshow-container">
+                <div class="slide1"></div>
+                <div class="slide2"></div>
+                <div class="slide3"></div>
+            </div>
+
+            <audio id="musicPlayer" controls style="display: none">
+              <source id="songOne" src="/songOne.mp3">
+              <source id="songTwo" src="/songTwo.mp3">
+              <source id="songThree" src="/songThree.mp3">
+            </audio>
+
+            <div>
+                <div class="play"></div>
+                <div class="prev"></div>
+                <div class="next"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slideshow-container > div');
+        const musicPlayer = document.getElementById("musicPlayer");
+        const playButton = document.querySelector('.play');
+        const prevButton = document.querySelector('.prev');
+        const nextButton = document.querySelector('.next');
+
+        let currentSlideIndex = 0; // 현재 슬라이드
+        let isPlaying = false; // 음악이 재생 중인지 여부
+
+        // 음악 파일 목록 (상위 디렉토리에 있는 mp3 파일 사용)
+        const songs = [
+            "../songOne.mp3",
+            "../songTwo.mp3",
+            "../songThree.mp3",
+        ];
+
+        // 초기 슬라이드 및 음악 설정
+        showSlide(currentSlideIndex);
+
+        // 재생 버튼 클릭 시
+        playButton.addEventListener("click", function () {
+            if (!isPlaying) {
+                // 현재 인덱스의 노래를 재생
+                musicPlayer.src = songs[currentSlideIndex];
+                musicPlayer.play();
+            } else {
+                musicPlayer.pause();
+            }
+            // isPlaying이 false이면, !isPlaying은 true, 음악을 재생 상태로 전환. 그 다음 클릭에서 isPlaying이 true이면, !isPlaying은 false, 음악을 일시정지 상태로 전환.
+            isPlaying = !isPlaying;
+        });
+
+        // 이전 곡 버튼 클릭 시
+        prevButton.addEventListener("click", function () {
+          // currentSlideIndex -1 이 음수일 수 있으므로, % slides.length를 사용하여 슬라이드의 개수로 나눈 나머지를 구함
+            currentSlideIndex = (currentSlideIndex - 1 + slides.length) % slides.length;
+            showSlide(currentSlideIndex);
+            musicPlayer.src = songs[currentSlideIndex]; // 이전 곡의 mp3 파일로 변경
+            musicPlayer.play(); // 변경된 곡 재생
+            isPlaying = true; // 재생 상태로 변경
+        });
+
+        // 다음 곡 버튼 클릭 시
+        nextButton.addEventListener("click", function () {
+            currentSlideIndex = (currentSlideIndex + 1) % slides.length;
+            showSlide(currentSlideIndex);
+            musicPlayer.src = songs[currentSlideIndex]; // 다음 곡의 mp3 파일로 변경
+            musicPlayer.play(); // 변경된 곡 재생
+            isPlaying = true; // 재생 상태로 변경
+        });
+
+        // 슬라이드를 보여주는 함수
+        function showSlide(index) {
+            // forEach 함수로 배열의 각각 요소에 함수를 실행, slide(각 슬라이드 요소), i(현재 슬라이드 인덱스)
+            slides.forEach((slide, i) => {
+                if (i === index) {
+                    slide.style.display = 'block'; // 현재 슬라이드를 표시
+                } else {
+                    slide.style.display = 'none'; // 현재 슬라이드가 아니면 숨김
+                }
+            });
+        }
+    </script>
+  </body>
+</html>
